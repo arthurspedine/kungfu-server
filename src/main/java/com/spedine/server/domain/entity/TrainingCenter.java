@@ -14,7 +14,7 @@ public class TrainingCenter {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", nullable = false)
     private User teacher;
 
@@ -60,7 +60,7 @@ public class TrainingCenter {
         return id;
     }
 
-    public Student getTeacher() {
+    public User getTeacher() {
         return teacher;
     }
 

@@ -1,12 +1,15 @@
 package com.spedine.server.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -22,8 +25,8 @@ public class User extends Student implements UserDetails {
     @Enumerated(EnumType.STRING)
     private ERole role;
 
-    @OneToOne(mappedBy = "teacher")
-    private TrainingCenter trainingCenter;
+    @OneToMany(mappedBy = "teacher")
+    private List<TrainingCenter> trainingCenters = new ArrayList<>();
 
     public User() {
     }
@@ -80,13 +83,11 @@ public class User extends Student implements UserDetails {
         return role;
     }
 
-    @Override
-    public TrainingCenter getTrainingCenter() {
-        return trainingCenter;
+    public List<TrainingCenter> getTeachingTrainingCenters() {
+        return trainingCenters;
     }
 
-    @Override
-    public void setTrainingCenter(TrainingCenter trainingCenter) {
-        this.trainingCenter = trainingCenter;
+    public void setTeachingTrainingCenters(List<TrainingCenter> trainingCenters) {
+        this.trainingCenters = trainingCenters;
     }
 }
