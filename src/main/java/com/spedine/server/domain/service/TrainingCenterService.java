@@ -4,9 +4,12 @@ import com.spedine.server.api.dto.CreateTrainingCenterDTO;
 import com.spedine.server.domain.entity.TrainingCenter;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.repository.TrainingCenterRepository;
+import com.spedine.server.dto.TeacherDTO;
+import com.spedine.server.dto.TrainingCenterDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -38,5 +41,26 @@ public class TrainingCenterService {
 
     public TrainingCenter findById(UUID id) {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Nucleo nao encontrado."));
+    }
+
+    public List<TrainingCenterDTO> findAllTrainingCenterDTOByUser(User user) {
+        List<TrainingCenter> trainingCenters = null;
+        if (user.isMaster())
+            trainingCenters = repository.findAll();
+        else trainingCenters = findAllByUser(user);
+        return trainingCenters.stream().map(this::mapperToDTO).toList();
+    }
+
+    public List<TrainingCenter> findAllByUser(User user) {
+        return repository.findAllByTeacher(user);
+    }
+
+    private TrainingCenterDTO mapperToDTO(TrainingCenter trainingCenter) {
+        User teacher = trainingCenter.getTeacher();
+        return new TrainingCenterDTO(trainingCenter.getId(),
+                new TeacherDTO(teacher.getName(), teacher.getCurrentBelt().getName().getDescription(), teacher.getSex().getDescription()),
+                trainingCenter.getStudents().size(), trainingCenter.getName(),
+                trainingCenter.getStreet(), trainingCenter.getNumber(),
+                trainingCenter.getCity(), trainingCenter.getState(), trainingCenter.getZipCode());
     }
 }

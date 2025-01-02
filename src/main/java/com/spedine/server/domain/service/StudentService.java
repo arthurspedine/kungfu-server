@@ -1,6 +1,5 @@
 package com.spedine.server.domain.service;
 
-import com.spedine.server.api.dto.CreateUserDTO;
 import com.spedine.server.api.dto.CreateStudentDTO;
 import com.spedine.server.api.dto.StudentInformationDTO;
 import com.spedine.server.domain.entity.Belt;
@@ -11,7 +10,6 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Service
 public class StudentService {
