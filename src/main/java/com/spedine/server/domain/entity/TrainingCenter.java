@@ -2,12 +2,13 @@ package com.spedine.server.domain.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "training_center")
+@Table(name = "training_centers")
 public class TrainingCenter {
 
     @Id
@@ -38,6 +39,11 @@ public class TrainingCenter {
 
     @Column(nullable = false, length = 8)
     private String zipCode;
+
+    @Column(nullable = false)
+    private LocalDate openingDate;
+
+    private LocalDate closingDate;
 
     public TrainingCenter() {
     }
@@ -122,5 +128,21 @@ public class TrainingCenter {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public LocalDate getOpeningDate() {
+        return openingDate;
+    }
+
+    public void setOpeningDate(LocalDate openingDate) {
+        this.openingDate = openingDate;
+    }
+
+    public LocalDate getClosingDate() {
+        return closingDate;
+    }
+
+    public void setClosingDate(LocalDate closingDate) {
+        this.closingDate = closingDate;
     }
 }

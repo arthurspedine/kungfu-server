@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         req -> {
                             req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
-                            req.requestMatchers(HttpMethod.POST, "/user/*", "/student/register", "/training-center/*").hasRole("TEACHER");
+                            req.requestMatchers(HttpMethod.POST, "/user/*", "/student-belt/*", "/student/register", "/training-center/*").hasRole("TEACHER");
                             req.anyRequest().authenticated();
                         }
                 )

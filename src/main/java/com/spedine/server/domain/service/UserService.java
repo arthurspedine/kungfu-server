@@ -1,7 +1,6 @@
 package com.spedine.server.domain.service;
 
 import com.spedine.server.api.dto.CreateUserDTO;
-import com.spedine.server.domain.entity.Belt;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,12 +21,9 @@ public class UserService {
 
     private final StudentBeltService studentBeltService;
 
-    private final BeltService beltService;
-
-    public UserService(UserRepository repository, StudentBeltService studentBeltService, BeltService beltService) {
+    public UserService(UserRepository repository, StudentBeltService studentBeltService) {
         this.repository = repository;
         this.studentBeltService = studentBeltService;
-        this.beltService = beltService;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
@@ -46,13 +42,7 @@ public class UserService {
         user.setRole(dto.role());
 
         // Save to get UUID
-        repository.save(user);
-
-        // Belt setup
-        Belt belt = beltService.findBeltByEnumType(dto.belt().type());
-        studentBeltService.registerBeltForStudent(user, belt, dto.belt().achievedDate());
-
-        return user;
+        return repository.save(user);
     }
 
     public User findUserById(UUID id) {

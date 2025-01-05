@@ -1,9 +1,11 @@
 package com.spedine.server.domain.service;
 
+import com.spedine.server.api.dto.BeltDataDTO;
 import com.spedine.server.domain.entity.Belt;
 import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.StudentBelt;
 import com.spedine.server.domain.repository.StudentBeltRepository;
+import com.spedine.server.dto.StudentBeltDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -14,15 +16,25 @@ public class StudentBeltService {
 
     private final StudentBeltRepository repository;
 
-    public StudentBeltService(StudentBeltRepository repository) {
+    private final BeltService beltService;
+
+    public StudentBeltService(StudentBeltRepository repository, BeltService beltService) {
         this.repository = repository;
+        this.beltService = beltService;
     }
 
     @Transactional
-    public void registerBeltForStudent(Student student, Belt belt, String achievedDate)  {
-        LocalDate parsedAchivedDate = LocalDate.parse(achievedDate);
+    public StudentBelt registerBeltForStudent(Student student, BeltDataDTO dto)  {
+        Belt belt = beltService.findBeltByEnumType(dto.type());
+        LocalDate parsedAchivedDate = LocalDate.parse(dto.achievedDate());
         StudentBelt studentBelt = new StudentBelt(student, belt, parsedAchivedDate);
-        repository.save(studentBelt);
+        return repository.save(studentBelt);
     }
 
+    public StudentBeltDTO mapperToDTO(StudentBelt studentBelt) {
+        return new StudentBeltDTO(
+                studentBelt.getId(), studentBelt.getStudent().getId(),
+                studentBelt.getBelt().getName().getDescription(),
+                studentBelt.getAchievedDate().toString());
+    }
 }

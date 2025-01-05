@@ -9,6 +9,7 @@ import com.spedine.server.dto.TrainingCenterDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,6 +37,7 @@ public class TrainingCenterService {
         trainingCenter.setCity(dto.city());
         trainingCenter.setState(dto.state());
         trainingCenter.setZipCode(dto.zipCode());
+        trainingCenter.setOpeningDate(dto.openingDate());
         repository.save(trainingCenter);
     }
 
