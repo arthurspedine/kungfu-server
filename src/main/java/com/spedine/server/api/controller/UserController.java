@@ -1,6 +1,7 @@
 package com.spedine.server.api.controller;
 
 import com.spedine.server.domain.entity.User;
+import com.spedine.server.domain.service.StudentBeltService;
 import com.spedine.server.domain.service.UserService;
 import com.spedine.server.api.dto.CreateUserDTO;
 import jakarta.transaction.Transactional;
@@ -18,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
+    private final StudentBeltService studentBeltService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, StudentBeltService studentBeltService) {
         this.userService = userService;
+        this.studentBeltService = studentBeltService;
     }
 
     @PostMapping("/register")
@@ -28,6 +31,7 @@ public class UserController {
     @Transactional
     public ResponseEntity<?> registerUser(@RequestBody @Valid CreateUserDTO dto) {
         User user = userService.registerUser(dto);
+        studentBeltService.registerBeltForStudent(user, dto.belt());
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 }

@@ -1,4 +1,4 @@
-CREATE TABLE training_center
+CREATE TABLE training_centers
 (
     id         UUID PRIMARY KEY,
     teacher_id UUID         NOT NULL,
