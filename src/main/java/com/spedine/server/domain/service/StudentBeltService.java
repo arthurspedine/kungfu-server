@@ -5,6 +5,7 @@ import com.spedine.server.domain.entity.Belt;
 import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.StudentBelt;
 import com.spedine.server.domain.repository.StudentBeltRepository;
+import com.spedine.server.dto.BeltInfoDTO;
 import com.spedine.server.dto.StudentBeltDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class StudentBeltService {
     public StudentBeltDTO mapperToDTO(StudentBelt studentBelt) {
         return new StudentBeltDTO(
                 studentBelt.getId(), studentBelt.getStudent().getId(),
-                studentBelt.getBelt().getName().getDescription(),
-                studentBelt.getAchievedDate().toString());
+                new BeltInfoDTO(studentBelt.getBelt().getName().getDescription(),
+                studentBelt.getAchievedDate().toString()));
     }
 }

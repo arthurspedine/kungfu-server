@@ -3,13 +3,17 @@ package com.spedine.server.domain.service;
 import com.spedine.server.api.dto.CreateStudentDTO;
 import com.spedine.server.api.dto.StudentInformationDTO;
 import com.spedine.server.domain.entity.Student;
+import com.spedine.server.domain.entity.StudentBelt;
 import com.spedine.server.domain.entity.TrainingCenter;
 import com.spedine.server.domain.repository.StudentRepository;
+import com.spedine.server.dto.BeltInfoDTO;
+import com.spedine.server.dto.StudentInfoDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -33,6 +37,14 @@ public class StudentService {
 
     public Student findStudentById(UUID id) {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Estudante nao encontrado."));
+    }
+
+    public StudentInfoDTO getStudentInfoById(UUID id) {
+        Student student = findStudentById(id);
+        StudentInformationDTO studentInformationDTO = new StudentInformationDTO(student.getName(), student.getBirthDate().toString(), student.getSex());
+        List<StudentBelt> belts = student.getBelts();
+        List<BeltInfoDTO> beltsDTO = belts.stream().map(b -> new BeltInfoDTO(b.getBelt().getName().getDescription(), b.getAchievedDate().toString())).toList();
+        return new StudentInfoDTO(studentInformationDTO, beltsDTO,student.getTrainingCenter().getId());
     }
 
     private void setStudentVariables(Student student, StudentInformationDTO dto, TrainingCenter trainingCenter) {

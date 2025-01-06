@@ -4,13 +4,13 @@ import com.spedine.server.api.dto.CreateStudentDTO;
 import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.service.StudentBeltService;
 import com.spedine.server.domain.service.StudentService;
+import com.spedine.server.dto.StudentInfoDTO;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/student")
@@ -30,6 +30,12 @@ public class StudentController {
         Student student = studentService.registerStudentByCreateDto(dto);
         studentBeltService.registerBeltForStudent(student, dto.belt());
         return ResponseEntity.status(201).build();
+    }
+
+    @GetMapping("/info/{id}")
+    public ResponseEntity<?> studentInfo(@PathVariable UUID id) {
+        StudentInfoDTO dto = studentService.getStudentInfoById(id);
+        return ResponseEntity.ok(dto);
     }
 
 }

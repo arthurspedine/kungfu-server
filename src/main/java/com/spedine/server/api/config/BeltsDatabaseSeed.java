@@ -20,7 +20,7 @@ public class BeltsDatabaseSeed {
         for (EBelt eBelt : EBelt.values()) {
             if (!beltRepository.existsByName(eBelt)) {
                 beltRepository.save(new Belt(eBelt));
-                System.out.println("Added belt: " + eBelt);
+                System.out.println("Added name: " + eBelt);
             }
         }
     }

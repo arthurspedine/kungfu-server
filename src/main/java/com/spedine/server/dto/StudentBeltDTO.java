@@ -5,7 +5,6 @@ import java.util.UUID;
 public record StudentBeltDTO(
         UUID id,
         UUID studentId,
-        String belt,
-        String achivedDate
+        BeltInfoDTO belt
 ) {
 }
