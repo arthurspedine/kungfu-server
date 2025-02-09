@@ -45,7 +45,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if (cookies != null) {
             // SAVING COOKIE NAME AS VARIABLE
-            String cookieName = CookieName.COOKIE_NAME + "=";
+            String cookieName = CookieName.getName() + "=";
 
             String[] cookieArray = cookies.split(";");
             for (String cookie : cookieArray) {

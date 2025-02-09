@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    @PreAuthorize("hasAnyRole('TEACHER', 'MASTER')")
+    @PreAuthorize("hasRole('MASTER')")
     @Transactional
     public ResponseEntity<?> registerUser(@RequestBody @Valid CreateUserDTO dto) {
         User user = userService.registerUser(dto);
