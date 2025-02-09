@@ -8,6 +8,8 @@ import com.spedine.server.domain.entity.ESex;
 import com.spedine.server.domain.repository.UserRepository;
 import com.spedine.server.domain.service.UserService;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AdminUser {
 
+    private static final Logger log = LoggerFactory.getLogger(AdminUser.class);
     private final UserService userService;
     private final UserRepository userRepository;
     @Value("${api.security.admin.password}")
@@ -34,7 +37,7 @@ public class AdminUser {
                     new StudentInformationDTO("Admin User", "2000-01-01", ESex.M),
                     ERole.MASTER, null, new LoginBodyDTO(email, password));
             userService.registerUser(dto);
-            System.out.println("Created Admin User!");
+            log.info("Created Admin User!");
         }
     }
 }
