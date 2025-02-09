@@ -1,15 +1,11 @@
 package com.spedine.server.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -42,6 +38,24 @@ public class User extends Student implements UserDetails {
 
     public boolean hasTeacherRole() {
         return role == ERole.TEACHER || role == ERole.MASTER;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        User user = (User) obj;
+        return Objects.equals(getId(), user.getId());
+    }
+
+    // hashCode
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 
     @Override

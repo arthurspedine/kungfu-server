@@ -36,11 +36,14 @@ public class AuthenticationController {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(body.email(), body.password());
         Authentication authentication = manager.authenticate(authToken);
         String token = tokenService.genToken((User) authentication.getPrincipal());
-        Cookie cookie = new Cookie(CookieName.COOKIE_NAME, token);
+        Cookie cookie = new Cookie(CookieName.getName(), token);
         cookie.setSecure(true);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
+        cookie.setMaxAge(604800); // 7 days
         response.addCookie(cookie);
+
+        response.setHeader("Access-Control-Allow-Credentials", "true");
         return ResponseEntity.ok(Map.of("token", token));
     }
 }

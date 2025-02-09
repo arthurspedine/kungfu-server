@@ -1,15 +1,18 @@
 package com.spedine.server.domain.service;
 
 import com.spedine.server.api.dto.CreateTrainingCenterDTO;
+import com.spedine.server.api.dto.StudentInformationDTO;
+import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.TrainingCenter;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.repository.TrainingCenterRepository;
 import com.spedine.server.dto.TeacherDTO;
 import com.spedine.server.dto.TrainingCenterDTO;
+import com.spedine.server.dto.TrainingCenterInfoDTO;
+import com.spedine.server.dto.TrainingCenterStudentDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,7 +49,7 @@ public class TrainingCenterService {
     }
 
     public List<TrainingCenterDTO> findAllTrainingCenterDTOByUser(User user) {
-        List<TrainingCenter> trainingCenters = null;
+        List<TrainingCenter> trainingCenters;
         if (user.isMaster())
             trainingCenters = repository.findAll();
         else trainingCenters = findAllByUser(user);
@@ -57,6 +60,16 @@ public class TrainingCenterService {
         return repository.findAllByTeacher(user);
     }
 
+    public TrainingCenterInfoDTO getInfoById(User user, UUID id) {
+        TrainingCenter trainingCenter = findById(id);
+        if (!trainingCenter.getTeacher().equals(user) && !user.isMaster()) {
+            throw new RuntimeException("Você não pode acessar este núcleo.");
+        }
+        return new TrainingCenterInfoDTO(
+                mapperToDTO(trainingCenter), trainingCenter.getStudents().stream().map(this::mapperToStudentDTO).toList()
+        );
+    }
+
     private TrainingCenterDTO mapperToDTO(TrainingCenter trainingCenter) {
         User teacher = trainingCenter.getTeacher();
         return new TrainingCenterDTO(trainingCenter.getId(),
@@ -64,5 +77,12 @@ public class TrainingCenterService {
                 trainingCenter.getStudents().size(), trainingCenter.getName(),
                 trainingCenter.getStreet(), trainingCenter.getNumber(),
                 trainingCenter.getCity(), trainingCenter.getState(), trainingCenter.getZipCode());
+    }
+
+    private TrainingCenterStudentDTO mapperToStudentDTO(Student student) {
+        return new TrainingCenterStudentDTO(
+                student.getId(),
+                new StudentInformationDTO(student.getName(), student.getBirthDate().toString(), student.getSex()),
+                student.getCurrentBelt().getName().getDescription());
     }
 }
