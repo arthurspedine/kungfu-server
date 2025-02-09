@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url: ${KUNGFU_DB_URL}
+    username: ${KUNGFU_DB_USER}
+    password: ${KUNGFU_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:highwater}
+    admin:
+      password: ${ADMIN_PASSWORD}
+  frontend:
+    url: ${FRONTEND_URL}
+  cookie_name: ${COOKIE_NAME}

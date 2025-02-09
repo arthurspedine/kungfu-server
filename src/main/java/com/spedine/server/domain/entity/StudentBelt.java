@@ -3,6 +3,7 @@ package com.spedine.server.domain.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -31,6 +32,18 @@ public class StudentBelt {
         this.student = student;
         this.belt = belt;
         this.achievedDate = achievedDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        StudentBelt that = (StudentBelt) o;
+        return Objects.equals(student, that.student) && Objects.equals(belt, that.belt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(student, belt);
     }
 
     public UUID getId() {

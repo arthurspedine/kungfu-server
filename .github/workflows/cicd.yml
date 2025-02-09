@@ -36,3 +36,4 @@ jobs:
           app-name: kungfutaishan
           publish-profile: ${{ secrets.azureWebAppPublicProfile }}
           package: '*.jar'
+          startup-command: 'java -jar -Dspring.profiles.active=prod *.jar'

@@ -2,6 +2,8 @@ package com.spedine.server.domain.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "belts")
 public class Belt {
@@ -19,6 +21,18 @@ public class Belt {
 
     public Belt(EBelt EBelt) {
         this.name = EBelt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Belt belt = (Belt) o;
+        return Objects.equals(id, belt.id) && name == belt.name;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 
     public Long getId() {
