@@ -1,6 +1,7 @@
 package com.spedine.server.domain.service;
 
 import com.spedine.server.api.dto.CreateUserDTO;
+import com.spedine.server.api.dto.UserListingInfoDTO;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -47,5 +49,9 @@ public class UserService {
 
     public User findUserById(UUID id) {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario nao encontrado."));
+    }
+
+    public List<UserListingInfoDTO> listAll() {
+        return repository.listAllUsers();
     }
 }

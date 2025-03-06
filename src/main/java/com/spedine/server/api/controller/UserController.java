@@ -1,6 +1,7 @@
 package com.spedine.server.api.controller;
 
-import com.spedine.server.api.dto.UserInfoDTO;
+import com.spedine.server.api.dto.UserDashboardInfoDTO;
+import com.spedine.server.api.dto.UserListingInfoDTO;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.service.StudentBeltService;
 import com.spedine.server.domain.service.UserService;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -35,8 +38,13 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<UserInfoDTO> getUserInfo(Authentication auth) {
+    public ResponseEntity<UserDashboardInfoDTO> getUserInfo(Authentication auth) {
         User user = (User) auth.getPrincipal();
-        return ResponseEntity.ok(new UserInfoDTO(user.getName(), user.getUsername()));
+        return ResponseEntity.ok(new UserDashboardInfoDTO(user.getName(), user.getUsername()));
+    }
+
+    @GetMapping("/list-all")
+    public ResponseEntity<List<UserListingInfoDTO>> listAllUsers() {
+        return ResponseEntity.ok(userService.listAll());
     }
 }

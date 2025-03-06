@@ -39,7 +39,7 @@ public class TrainingCenterService {
         trainingCenter.setStreet(dto.street());
         trainingCenter.setCity(dto.city());
         trainingCenter.setState(dto.state());
-        trainingCenter.setZipCode(dto.zipCode());
+        trainingCenter.setZipCode(dto.zipCode().replace("-", ""));
         trainingCenter.setOpeningDate(dto.openingDate());
         repository.save(trainingCenter);
     }
@@ -48,11 +48,8 @@ public class TrainingCenterService {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Nucleo nao encontrado."));
     }
 
-    public List<TrainingCenterDTO> findAllTrainingCenterDTOByUser(User user) {
-        List<TrainingCenter> trainingCenters;
-        if (user.isMaster())
-            trainingCenters = repository.findAll();
-        else trainingCenters = findAllByUser(user);
+    public List<TrainingCenterDTO> findAllTrainingCenterDTO() {
+        List<TrainingCenter> trainingCenters = repository.findAll();
         return trainingCenters.stream().map(this::mapperToDTO).toList();
     }
 
@@ -72,11 +69,13 @@ public class TrainingCenterService {
 
     private TrainingCenterDTO mapperToDTO(TrainingCenter trainingCenter) {
         User teacher = trainingCenter.getTeacher();
+        String fullAddress = trainingCenter.getStreet() + " " + trainingCenter.getNumber();
         return new TrainingCenterDTO(trainingCenter.getId(),
                 new TeacherDTO(teacher.getName(), teacher.getCurrentBelt().getName().getDescription(), teacher.getSex().getDescription()),
                 trainingCenter.getStudents().size(), trainingCenter.getName(),
-                trainingCenter.getStreet(), trainingCenter.getNumber(),
-                trainingCenter.getCity(), trainingCenter.getState(), trainingCenter.getZipCode());
+                fullAddress, trainingCenter.getCity(), trainingCenter.getState(),
+                trainingCenter.getOpeningDate().toString(),
+                trainingCenter.getClosingDate() != null ? trainingCenter.getClosingDate().toString() : null);
     }
 
     private TrainingCenterStudentDTO mapperToStudentDTO(Student student) {

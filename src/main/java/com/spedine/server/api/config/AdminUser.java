@@ -35,7 +35,7 @@ public class AdminUser {
         if (userDetails == null) {
             CreateUserDTO dto = new CreateUserDTO(
                     new StudentInformationDTO("Admin User", "2000-01-01", ESex.M),
-                    ERole.MASTER, null, new LoginBodyDTO(email, password));
+                    ERole.ADMIN, null, new LoginBodyDTO(email, password));
             userService.registerUser(dto);
             log.info("Created Admin User!");
         }

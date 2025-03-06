@@ -3,7 +3,8 @@ package com.spedine.server.domain.entity;
 public enum ERole {
 
     TEACHER("Professor"),
-    MASTER("Mestre");
+    MASTER("Mestre"),
+    ADMIN("Admin");
 
     private final String description;
 

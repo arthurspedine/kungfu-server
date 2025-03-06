@@ -32,6 +32,10 @@ public class User extends Student implements UserDetails {
         this.password = password;
     }
 
+    public boolean isAdmin() {
+        return this.role == ERole.ADMIN;
+    }
+
     public boolean isMaster() {
         return this.role == ERole.MASTER;
     }
