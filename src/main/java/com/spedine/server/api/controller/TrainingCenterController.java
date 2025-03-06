@@ -35,9 +35,8 @@ public class TrainingCenterController {
 
     @GetMapping("/all")
     @PreAuthorize("hasAnyRole('TEACHER', 'MASTER')")
-    public ResponseEntity<List<TrainingCenterDTO>> listAll(Authentication auth) {
-        User user = (User) auth.getPrincipal();
-        List<TrainingCenterDTO> centers = service.findAllTrainingCenterDTOByUser(user);
+    public ResponseEntity<List<TrainingCenterDTO>> listAll() {
+        List<TrainingCenterDTO> centers = service.findAllTrainingCenterDTO();
         return ResponseEntity.ok(centers);
     }
 

@@ -1,6 +1,6 @@
 package com.spedine.server.api.dto;
 
-public record UserInfoDTO(
+public record UserDashboardInfoDTO(
         String name,
         String email
 ) {

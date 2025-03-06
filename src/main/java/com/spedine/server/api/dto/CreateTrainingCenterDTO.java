@@ -22,7 +22,7 @@ public record CreateTrainingCenterDTO(
         @NotNull
         String state,
         @NotNull
-        @Pattern(regexp = "^\\d{8}$", message = "O código postal deve ser apenas números e ter 8 digitos.")
+        @Pattern(regexp = "^\\d{5}-\\d{3}$", message = "O código postal deve ter o formato 00000-000.")
         String zipCode,
         @NotNull
         @Past(message = "A data de inauguração deve ser antes de hoje.")

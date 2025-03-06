@@ -7,11 +7,11 @@ public record TrainingCenterDTO(
         TeacherDTO teacher,
         Integer studentsNumber,
         String name,
-        String street,
-        Integer number,
+        String fullAddress,
         String city,
         String state,
-        String zipCode
+        String openingDate,
+        String closingDate
 ) {
 }
 
