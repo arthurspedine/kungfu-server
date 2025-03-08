@@ -11,9 +11,12 @@ import com.spedine.server.dto.TrainingCenterDTO;
 import com.spedine.server.dto.TrainingCenterInfoDTO;
 import com.spedine.server.dto.TrainingCenterStudentDTO;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -29,6 +32,8 @@ public class TrainingCenterService {
     }
 
     public void registerTrainingCenter(CreateTrainingCenterDTO dto) {
+        if (dto.openingDate().isAfter(LocalDate.now()))
+            throw new ValidationException("A data de inauguração deve ser antes de hoje.");
         User user = userService.findUserById(dto.teacherId());
         if (!user.hasTeacherRole())
             throw new RuntimeException();
@@ -36,6 +41,7 @@ public class TrainingCenterService {
         trainingCenter.setTeacher(user);
         trainingCenter.setName(dto.name());
         trainingCenter.setNumber(dto.number());
+        trainingCenter.setAdditionalAddress(dto.additionalAddress());
         trainingCenter.setStreet(dto.street());
         trainingCenter.setCity(dto.city());
         trainingCenter.setState(dto.state());
@@ -70,6 +76,9 @@ public class TrainingCenterService {
     private TrainingCenterDTO mapperToDTO(TrainingCenter trainingCenter) {
         User teacher = trainingCenter.getTeacher();
         String fullAddress = trainingCenter.getStreet() + " " + trainingCenter.getNumber();
+        if (!Objects.isNull(trainingCenter.getAdditionalAddress()))
+            if (!trainingCenter.getAdditionalAddress().isEmpty())
+                fullAddress += ", " + trainingCenter.getAdditionalAddress();
         return new TrainingCenterDTO(trainingCenter.getId(),
                 new TeacherDTO(teacher.getName(), teacher.getCurrentBelt().getName().getDescription(), teacher.getSex().getDescription()),
                 trainingCenter.getStudents().size(), trainingCenter.getName(),

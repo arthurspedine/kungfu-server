@@ -31,6 +31,9 @@ public class TrainingCenter {
     @Column(nullable = false)
     private Integer number;
 
+    @Column(name = "additional_address")
+    private String additionalAddress;
+
     @Column(nullable = false)
     private String city;
 
@@ -104,6 +107,14 @@ public class TrainingCenter {
 
     public void setNumber(Integer number) {
         this.number = number;
+    }
+
+    public String getAdditionalAddress() {
+        return additionalAddress;
+    }
+
+    public void setAdditionalAddress(String additionalAddress) {
+        this.additionalAddress = additionalAddress;
     }
 
     public String getCity() {

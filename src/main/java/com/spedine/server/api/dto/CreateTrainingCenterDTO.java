@@ -17,6 +17,7 @@ public record CreateTrainingCenterDTO(
         String street,
         @NotNull
         int number,
+        String additionalAddress,
         @NotNull
         String city,
         @NotNull
