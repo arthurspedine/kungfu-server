@@ -63,7 +63,15 @@ public class TrainingCenterService {
         return repository.findAllByTeacher(user);
     }
 
-    public TrainingCenterInfoDTO getInfoById(User user, UUID id) {
+    public TrainingCenterDTO getInfoById(User user, UUID id) {
+        TrainingCenter trainingCenter = findById(id);
+        if (!trainingCenter.getTeacher().equals(user) && !user.isMaster()) {
+            throw new RuntimeException("Você não pode acessar este núcleo.");
+        }
+        return mapperToDTO(trainingCenter);
+    }
+
+    public TrainingCenterInfoDTO getDetailsById(User user, UUID id) {
         TrainingCenter trainingCenter = findById(id);
         if (!trainingCenter.getTeacher().equals(user) && !user.isMaster()) {
             throw new RuntimeException("Você não pode acessar este núcleo.");
