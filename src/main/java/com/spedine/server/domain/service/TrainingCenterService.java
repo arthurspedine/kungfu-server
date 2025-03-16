@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -83,15 +82,11 @@ public class TrainingCenterService {
 
     private TrainingCenterDTO mapperToDTO(TrainingCenter trainingCenter) {
         User teacher = trainingCenter.getTeacher();
-        String fullAddress = trainingCenter.getStreet() + " " + trainingCenter.getNumber();
-        if (!Objects.isNull(trainingCenter.getAdditionalAddress()))
-            if (!trainingCenter.getAdditionalAddress().isEmpty())
-                fullAddress += ", " + trainingCenter.getAdditionalAddress();
         return new TrainingCenterDTO(trainingCenter.getId(),
-                new TeacherDTO(teacher.getName(), teacher.getCurrentBelt().getName().getDescription(), teacher.getSex().getDescription()),
+                new TeacherDTO(teacher.getId(), teacher.getName(), teacher.getCurrentBelt().getName().getDescription(), teacher.getSex().getDescription()),
                 trainingCenter.getStudents().size(), trainingCenter.getName(),
-                fullAddress, trainingCenter.getCity(), trainingCenter.getState(),
-                trainingCenter.getOpeningDate().toString(),
+                trainingCenter.getStreet(), trainingCenter.getNumber(), trainingCenter.getAdditionalAddress(),
+                trainingCenter.getCity(), trainingCenter.getState(), trainingCenter.getOpeningDate().toString(),
                 trainingCenter.getClosingDate() != null ? trainingCenter.getClosingDate().toString() : null);
     }
 

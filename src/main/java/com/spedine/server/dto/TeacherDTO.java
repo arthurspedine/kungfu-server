@@ -1,6 +1,8 @@
 package com.spedine.server.dto;
 
+import java.util.UUID;
+
 public record TeacherDTO(
-        String name, String currentBelt, String sex
+        UUID id, String name, String currentBelt, String sex
 ) {
 }
