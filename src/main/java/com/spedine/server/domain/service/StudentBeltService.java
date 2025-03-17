@@ -1,7 +1,7 @@
 package com.spedine.server.domain.service;
 
 import com.spedine.server.api.dto.BeltDataDTO;
-import com.spedine.server.api.validations.student_belt.StudentBeltValidationHandler;
+import com.spedine.server.domain.validations.student_belt.StudentBeltValidationHandler;
 import com.spedine.server.domain.entity.Belt;
 import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.StudentBelt;

@@ -1,7 +1,7 @@
 package com.spedine.server.api.controller;
 
-import com.spedine.server.api.dto.UserDashboardInfoDTO;
-import com.spedine.server.api.dto.UserListingInfoDTO;
+import com.spedine.server.dto.UserDashboardInfoDTO;
+import com.spedine.server.dto.UserListingInfoDTO;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.service.StudentBeltService;
 import com.spedine.server.domain.service.UserService;
@@ -43,7 +43,7 @@ public class UserController {
         return ResponseEntity.ok(new UserDashboardInfoDTO(user.getName(), user.getUsername()));
     }
 
-    @GetMapping("/list-all")
+    @GetMapping("/list/all")
     public ResponseEntity<List<UserListingInfoDTO>> listAllUsers() {
         return ResponseEntity.ok(userService.listAll());
     }

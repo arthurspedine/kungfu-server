@@ -1,4 +1,4 @@
-package com.spedine.server.api.validations.student_belt;
+package com.spedine.server.domain.validations.student_belt;
 
 import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.StudentBelt;

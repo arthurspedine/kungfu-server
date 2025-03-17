@@ -1,4 +1,4 @@
-package com.spedine.server.api.dto;
+package com.spedine.server.dto;
 
 import java.util.UUID;
 

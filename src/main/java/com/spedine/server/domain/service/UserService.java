@@ -1,7 +1,7 @@
 package com.spedine.server.domain.service;
 
 import com.spedine.server.api.dto.CreateUserDTO;
-import com.spedine.server.api.dto.UserListingInfoDTO;
+import com.spedine.server.dto.UserListingInfoDTO;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,11 +21,9 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final StudentBeltService studentBeltService;
 
-    public UserService(UserRepository repository, StudentBeltService studentBeltService) {
+    public UserService(UserRepository repository) {
         this.repository = repository;
-        this.studentBeltService = studentBeltService;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 

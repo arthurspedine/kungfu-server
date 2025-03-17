@@ -7,8 +7,8 @@ import com.spedine.server.domain.entity.TrainingCenter;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.repository.TrainingCenterRepository;
 import com.spedine.server.dto.TeacherDTO;
-import com.spedine.server.dto.TrainingCenterDTO;
 import com.spedine.server.dto.TrainingCenterInfoDTO;
+import com.spedine.server.dto.TrainingCenterDetailsDTO;
 import com.spedine.server.dto.TrainingCenterStudentDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
@@ -53,7 +53,7 @@ public class TrainingCenterService {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Nucleo nao encontrado."));
     }
 
-    public List<TrainingCenterDTO> findAllTrainingCenterDTO() {
+    public List<TrainingCenterInfoDTO> findAllTrainingCenterDTO() {
         List<TrainingCenter> trainingCenters = repository.findAll();
         return trainingCenters.stream().map(this::mapperToDTO).toList();
     }
@@ -62,7 +62,7 @@ public class TrainingCenterService {
         return repository.findAllByTeacher(user);
     }
 
-    public TrainingCenterDTO getInfoById(User user, UUID id) {
+    public TrainingCenterInfoDTO getInfoById(User user, UUID id) {
         TrainingCenter trainingCenter = findById(id);
         if (!trainingCenter.getTeacher().equals(user) && !user.isMaster()) {
             throw new RuntimeException("Você não pode acessar este núcleo.");
@@ -70,19 +70,19 @@ public class TrainingCenterService {
         return mapperToDTO(trainingCenter);
     }
 
-    public TrainingCenterInfoDTO getDetailsById(User user, UUID id) {
+    public TrainingCenterDetailsDTO getDetailsById(User user, UUID id) {
         TrainingCenter trainingCenter = findById(id);
         if (!trainingCenter.getTeacher().equals(user) && !user.isMaster()) {
             throw new RuntimeException("Você não pode acessar este núcleo.");
         }
-        return new TrainingCenterInfoDTO(
+        return new TrainingCenterDetailsDTO(
                 mapperToDTO(trainingCenter), trainingCenter.getStudents().stream().map(this::mapperToStudentDTO).toList()
         );
     }
 
-    private TrainingCenterDTO mapperToDTO(TrainingCenter trainingCenter) {
+    private TrainingCenterInfoDTO mapperToDTO(TrainingCenter trainingCenter) {
         User teacher = trainingCenter.getTeacher();
-        return new TrainingCenterDTO(trainingCenter.getId(),
+        return new TrainingCenterInfoDTO(trainingCenter.getId(),
                 new TeacherDTO(teacher.getId(), teacher.getName(), teacher.getCurrentBelt().getName().getDescription(), teacher.getSex().getDescription()),
                 trainingCenter.getStudents().size(), trainingCenter.getName(),
                 trainingCenter.getStreet(), trainingCenter.getNumber(), trainingCenter.getAdditionalAddress(),

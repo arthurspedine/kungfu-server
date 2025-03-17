@@ -3,8 +3,8 @@ package com.spedine.server.api.controller;
 import com.spedine.server.api.dto.CreateTrainingCenterDTO;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.service.TrainingCenterService;
-import com.spedine.server.dto.TrainingCenterDTO;
 import com.spedine.server.dto.TrainingCenterInfoDTO;
+import com.spedine.server.dto.TrainingCenterDetailsDTO;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -35,21 +35,21 @@ public class TrainingCenterController {
 
     @GetMapping("/all")
     @PreAuthorize("hasAnyRole('TEACHER', 'MASTER')")
-    public ResponseEntity<List<TrainingCenterDTO>> listAll() {
-        List<TrainingCenterDTO> centers = service.findAllTrainingCenterDTO();
+    public ResponseEntity<List<TrainingCenterInfoDTO>> listAll() {
+        List<TrainingCenterInfoDTO> centers = service.findAllTrainingCenterDTO();
         return ResponseEntity.ok(centers);
     }
 
     @GetMapping("/info/{id}")
-    public ResponseEntity<TrainingCenterDTO> getInfoFromTrainingCenterId(@PathVariable UUID id, Authentication auth) {
+    public ResponseEntity<TrainingCenterInfoDTO> getInfoFromTrainingCenterId(@PathVariable UUID id, Authentication auth) {
         User user = (User) auth.getPrincipal();
         return ResponseEntity.ok(service.getInfoById(user ,id));
     }
 
     @GetMapping("/details/{id}")
-    public ResponseEntity<?> getDetailsFromTrainingCenterId(@PathVariable UUID id, Authentication auth) {
+    public ResponseEntity<TrainingCenterDetailsDTO> getDetailsFromTrainingCenterId(@PathVariable UUID id, Authentication auth) {
         User user = (User) auth.getPrincipal();
-        TrainingCenterInfoDTO details = service.getDetailsById(user, id);
+        TrainingCenterDetailsDTO details = service.getDetailsById(user, id);
         return ResponseEntity.ok(details);
     }
 }

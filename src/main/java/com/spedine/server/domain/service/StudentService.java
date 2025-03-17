@@ -5,8 +5,10 @@ import com.spedine.server.api.dto.StudentInformationDTO;
 import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.StudentBelt;
 import com.spedine.server.domain.entity.TrainingCenter;
+import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.repository.StudentRepository;
 import com.spedine.server.dto.BeltInfoDTO;
+import com.spedine.server.dto.StudentDetailsDTO;
 import com.spedine.server.dto.StudentInfoDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -39,12 +41,16 @@ public class StudentService {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Estudante nao encontrado."));
     }
 
-    public StudentInfoDTO getStudentInfoById(UUID id) {
+    public StudentDetailsDTO getStudentInfoById(UUID id) {
         Student student = findStudentById(id);
         StudentInformationDTO studentInformationDTO = new StudentInformationDTO(student.getName(), student.getBirthDate().toString(), student.getSex());
         List<StudentBelt> belts = student.getBelts();
         List<BeltInfoDTO> beltsDTO = belts.stream().map(b -> new BeltInfoDTO(b.getBelt().getName().getDescription(), b.getAchievedDate().toString())).toList();
-        return new StudentInfoDTO(studentInformationDTO, beltsDTO,student.getTrainingCenter().getId());
+        return new StudentDetailsDTO(studentInformationDTO, beltsDTO,student.getTrainingCenter().getId());
+    }
+
+    public List<StudentInfoDTO> listAll(User user) {
+        return repository.listAllStudents(user.isMaster(), user.getId());
     }
 
     private void setStudentVariables(Student student, StudentInformationDTO dto, TrainingCenter trainingCenter) {

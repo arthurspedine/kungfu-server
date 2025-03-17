@@ -1,6 +1,6 @@
 package com.spedine.server.domain.repository;
 
-import com.spedine.server.api.dto.UserListingInfoDTO;
+import com.spedine.server.dto.UserListingInfoDTO;
 import com.spedine.server.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     UserDetails findByEmail(String email);
 
-    @Query("SELECT new com.spedine.server.api.dto.UserListingInfoDTO(u.id, s.name) " +
+    @Query("SELECT new com.spedine.server.dto.UserListingInfoDTO(u.id, s.name) " +
             "FROM User u " +
             "JOIN Student s " +
             "ON u.id = s.id " +
