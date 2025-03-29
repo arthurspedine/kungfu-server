@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,6 +40,20 @@ public class StudentBeltService {
         validations.forEach(validation -> validation.validate(student, studentBelt));
 
         return repository.save(studentBelt);
+    }
+
+    @Transactional
+    public void registerMultipleBeltsForStudent(Student student, List<BeltDataDTO> dto)  {
+        List<StudentBelt> belts = new ArrayList<>();
+        for (BeltDataDTO beltDTO : dto) {
+            Belt belt = beltService.findBeltByEnumType(beltDTO.type());
+            LocalDate parsedAchievedDate = LocalDate.parse(beltDTO.achievedDate());
+            StudentBelt studentBelt = new StudentBelt(student, belt, parsedAchievedDate);
+            validations.forEach(validation -> validation.validate(student, studentBelt));
+            student.getBelts().add(studentBelt); // update student for each validation
+            belts.add(studentBelt);
+        }
+        repository.saveAll(belts);
     }
 
     public StudentBeltDTO mapperToDTO(StudentBelt studentBelt) {

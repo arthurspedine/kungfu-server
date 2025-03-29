@@ -32,7 +32,7 @@ public class StudentController {
     @Transactional
     public ResponseEntity<?> registerStudent(@RequestBody @Valid CreateStudentDTO dto) {
         Student student = studentService.registerStudentByCreateDto(dto);
-        studentBeltService.registerBeltForStudent(student, dto.belt());
+        studentBeltService.registerMultipleBeltsForStudent(student, dto.belts());
         return ResponseEntity.status(201).build();
     }
 
