@@ -3,7 +3,6 @@ package com.spedine.server.api.controller;
 import com.spedine.server.api.dto.AddBeltToStudent;
 import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.StudentBelt;
-import com.spedine.server.domain.service.BeltService;
 import com.spedine.server.domain.service.StudentBeltService;
 import com.spedine.server.domain.service.StudentService;
 import jakarta.transaction.Transactional;

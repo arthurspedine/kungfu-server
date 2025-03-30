@@ -5,6 +5,7 @@ import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.service.TrainingCenterService;
 import com.spedine.server.dto.TrainingCenterInfoDTO;
 import com.spedine.server.dto.TrainingCenterDetailsDTO;
+import com.spedine.server.dto.TrainingCenterSimpleInfoDTO;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,13 @@ public class TrainingCenterController {
     public ResponseEntity<List<TrainingCenterInfoDTO>> listAll() {
         List<TrainingCenterInfoDTO> centers = service.findAllTrainingCenterDTO();
         return ResponseEntity.ok(centers);
+    }
+
+    @GetMapping("/all/info")
+    @PreAuthorize("hasAnyRole('TEACHER', 'MASTER')")
+    public ResponseEntity<List<TrainingCenterSimpleInfoDTO>> listAllInfo(Authentication auth) {
+        User user = (User) auth.getPrincipal();
+        return ResponseEntity.ok(service.findAllInfo(user));
     }
 
     @GetMapping("/info/{id}")

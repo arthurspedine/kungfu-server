@@ -11,7 +11,8 @@ import com.spedine.server.dto.BeltInfoDTO;
 import com.spedine.server.dto.StudentDetailsDTO;
 import com.spedine.server.dto.StudentInfoDTO;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,9 +31,15 @@ public class StudentService {
         this.trainingCenterService = trainingCenterService;
     }
 
-    public Student registerStudentByCreateDto(@Valid CreateStudentDTO dto) {
+    @Transactional
+    public Student registerStudentByCreateDto(CreateStudentDTO dto, User teacher) {
         Student student = new Student();
         TrainingCenter trainingCenter = trainingCenterService.findById(dto.trainingCenterId());
+        if (!teacher.isMaster() || !teacher.isAdmin()) {
+            if (!trainingCenter.getTeacher().equals(teacher)) {
+                throw new ValidationException("Adicione o aluno somente a núcleos que você é professor.");
+            }
+        }
         setStudentVariables(student, dto.student(), trainingCenter);
         return repository.save(student);
     }

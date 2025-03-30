@@ -30,9 +30,10 @@ public class StudentController {
 
     @PostMapping("/register")
     @Transactional
-    public ResponseEntity<?> registerStudent(@RequestBody @Valid CreateStudentDTO dto) {
-        Student student = studentService.registerStudentByCreateDto(dto);
-        studentBeltService.registerBeltForStudent(student, dto.belt());
+    public ResponseEntity<?> registerStudent(@RequestBody @Valid CreateStudentDTO dto, Authentication auth) {
+        User user = (User) auth.getPrincipal();
+        Student student = studentService.registerStudentByCreateDto(dto, user);
+        studentBeltService.registerMultipleBeltsForStudent(student, dto.belts());
         return ResponseEntity.status(201).build();
     }
 

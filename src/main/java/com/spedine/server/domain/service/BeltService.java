@@ -6,6 +6,11 @@ import com.spedine.server.domain.repository.BeltRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 public class BeltService {
 
@@ -20,5 +25,16 @@ public class BeltService {
         if (foundedBelt == null)
             throw new EntityNotFoundException("Belt not found!");
         return foundedBelt;
+    }
+
+    public List<Map<EBelt, String>> listAllBets() {
+        List<Belt> belts = repository.findAll();
+        return belts.stream()
+                .map(belt -> {
+                            Map<EBelt, String> betMap = new HashMap<>();
+                            betMap.put(belt.getName(), belt.getName().getDescription());
+                            return betMap;
+                        }
+                ).collect(Collectors.toList());
     }
 }
