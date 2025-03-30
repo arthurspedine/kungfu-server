@@ -6,10 +6,7 @@ import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.TrainingCenter;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.repository.TrainingCenterRepository;
-import com.spedine.server.dto.TeacherDTO;
-import com.spedine.server.dto.TrainingCenterInfoDTO;
-import com.spedine.server.dto.TrainingCenterDetailsDTO;
-import com.spedine.server.dto.TrainingCenterStudentDTO;
+import com.spedine.server.dto.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Service;
@@ -78,6 +75,18 @@ public class TrainingCenterService {
         return new TrainingCenterDetailsDTO(
                 mapperToDTO(trainingCenter), trainingCenter.getStudents().stream().map(this::mapperToStudentDTO).toList()
         );
+    }
+
+    public List<TrainingCenterSimpleInfoDTO> findAllInfo(User user) {
+        List<TrainingCenter> trainingCenters;
+        if (user.isMaster()) {
+            trainingCenters = repository.findAll();
+        } else {
+            trainingCenters = findAllByUser(user);
+        }
+        return trainingCenters.stream().map(trainingCenter -> new TrainingCenterSimpleInfoDTO(
+                trainingCenter.getId(), trainingCenter.getName(), trainingCenter.getTeacher().getName()
+        )).toList();
     }
 
     private TrainingCenterInfoDTO mapperToDTO(TrainingCenter trainingCenter) {
