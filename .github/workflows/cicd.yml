@@ -33,6 +33,6 @@ jobs:
       - name: Deploy to Azure App Services
         uses: azure/webapps-deploy@v2
         with:
-          app-name: kungfutaishan
+          app-name: kungfuapp
           publish-profile: ${{ secrets.azureWebAppPublicProfile }}
           package: '*.jar'
