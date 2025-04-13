@@ -18,7 +18,8 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
             "s.sex AS sex,  " +
             "b.name AS current_belt, " +
             "EXTRACT(MONTH FROM AGE(CURRENT_DATE, latest_belt.achieved_date))::INTEGER + " +
-            "(EXTRACT(YEAR FROM AGE(CURRENT_DATE, latest_belt.achieved_date))::INTEGER * 12) AS belt_age_months " +
+            "(EXTRACT(YEAR FROM AGE(CURRENT_DATE, latest_belt.achieved_date))::INTEGER * 12) AS belt_age_months, " +
+            "tc.name AS training_center " +
             "FROM students s " +
             "LEFT JOIN LATERAL ( " +
             "    SELECT sb.belt_id, sb.achieved_date " +

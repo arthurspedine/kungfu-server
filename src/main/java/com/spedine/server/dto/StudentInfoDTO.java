@@ -9,6 +9,7 @@ public record StudentInfoDTO(
         Integer age,
         String sex,
         String currentBelt,
-        Integer beltAgeMonths
+        Integer beltAgeMonths,
+        String trainingCenter
 ) {
 }
