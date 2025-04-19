@@ -32,7 +32,6 @@ public class Student {
     private TrainingCenter trainingCenter;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    @OrderBy("achievedDate DESC")
     private List<StudentBelt> belts = new ArrayList<>();
 
     public Student() {
@@ -75,14 +74,6 @@ public class Student {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     public ESex getSex() {

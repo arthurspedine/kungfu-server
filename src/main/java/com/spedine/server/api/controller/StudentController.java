@@ -1,6 +1,6 @@
 package com.spedine.server.api.controller;
 
-import com.spedine.server.api.dto.CreateStudentDTO;
+import com.spedine.server.api.dto.FormStudentDTO;
 import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.service.StudentBeltService;
@@ -30,16 +30,16 @@ public class StudentController {
 
     @PostMapping("/register")
     @Transactional
-    public ResponseEntity<?> registerStudent(@RequestBody @Valid CreateStudentDTO dto, Authentication auth) {
+    public ResponseEntity<Void> registerStudent(@RequestBody @Valid FormStudentDTO dto, Authentication auth) {
         User user = (User) auth.getPrincipal();
-        Student student = studentService.registerStudentByCreateDto(dto, user);
+        Student student = studentService.registerStudentByDto(dto, user);
         studentBeltService.registerMultipleBeltsForStudent(student, dto.belts());
         return ResponseEntity.status(201).build();
     }
 
-    @GetMapping("/info/{id}")
-    public ResponseEntity<StudentDetailsDTO> studentInfo(@PathVariable UUID id) {
-        StudentDetailsDTO dto = studentService.getStudentInfoById(id);
+    @GetMapping("/details/{id}")
+    public ResponseEntity<StudentDetailsDTO> getStudentDetails(@PathVariable UUID id) {
+        StudentDetailsDTO dto = studentService.getStudentDetails(id);
         return ResponseEntity.ok(dto);
     }
 
@@ -47,6 +47,18 @@ public class StudentController {
     public ResponseEntity<List<StudentInfoDTO>> listAllStudents(Authentication auth) {
         User user = (User) auth.getPrincipal();
         return ResponseEntity.ok(studentService.listAll(user));
+    }
+
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<Void> editStudent(
+            @PathVariable UUID id,
+            @RequestBody FormStudentDTO dto,
+            Authentication auth
+    ) {
+        User user = (User) auth.getPrincipal();
+        Student student = studentService.updateStudentByDto(id, dto, user);
+        studentBeltService.updateBeltsForStudent(student, dto.belts());
+        return ResponseEntity.status(201).build();
     }
 
 }

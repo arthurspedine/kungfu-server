@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public record CreateStudentDTO(
+public record FormStudentDTO(
         @NotNull
         StudentInformationDTO student,
         @NotNull

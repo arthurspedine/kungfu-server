@@ -1,6 +1,6 @@
 package com.spedine.server.domain.service;
 
-import com.spedine.server.api.dto.CreateStudentDTO;
+import com.spedine.server.api.dto.FormStudentDTO;
 import com.spedine.server.api.dto.StudentInformationDTO;
 import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.StudentBelt;
@@ -32,14 +32,10 @@ public class StudentService {
     }
 
     @Transactional
-    public Student registerStudentByCreateDto(CreateStudentDTO dto, User teacher) {
+    public Student registerStudentByDto(FormStudentDTO dto, User teacher) {
         Student student = new Student();
         TrainingCenter trainingCenter = trainingCenterService.findById(dto.trainingCenterId());
-        if (!teacher.isMaster() || !teacher.isAdmin()) {
-            if (!trainingCenter.getTeacher().equals(teacher)) {
-                throw new ValidationException("Adicione o aluno somente a núcleos que você é professor.");
-            }
-        }
+        validateTeacherAccess(teacher, trainingCenter);
         setStudentVariables(student, dto.student(), trainingCenter);
         return repository.save(student);
     }
@@ -48,16 +44,25 @@ public class StudentService {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Estudante nao encontrado."));
     }
 
-    public StudentDetailsDTO getStudentInfoById(UUID id) {
+    public StudentDetailsDTO getStudentDetails(UUID id) {
         Student student = findStudentById(id);
         StudentInformationDTO studentInformationDTO = new StudentInformationDTO(student.getName(), student.getBirthDate().toString(), student.getSex());
         List<StudentBelt> belts = student.getBelts();
         List<BeltInfoDTO> beltsDTO = belts.stream().map(b -> new BeltInfoDTO(b.getBelt().getName().getDescription(), b.getAchievedDate().toString())).toList();
-        return new StudentDetailsDTO(studentInformationDTO, beltsDTO,student.getTrainingCenter().getId());
+        return new StudentDetailsDTO(student.getId(), studentInformationDTO, beltsDTO, student.getTrainingCenter().getId());
     }
 
     public List<StudentInfoDTO> listAll(User user) {
         return repository.listAllStudents(user.isMaster(), user.getId());
+    }
+
+    @Transactional
+    public Student updateStudentByDto(UUID id, FormStudentDTO dto, User teacher) {
+        Student student = findStudentById(id);
+        TrainingCenter trainingCenter = trainingCenterService.findById(dto.trainingCenterId());
+        validateTeacherAccess(teacher, trainingCenter);
+        setStudentVariables(student, dto.student(), trainingCenter);
+        return repository.save(student);
     }
 
     private void setStudentVariables(Student student, StudentInformationDTO dto, TrainingCenter trainingCenter) {
@@ -65,5 +70,13 @@ public class StudentService {
         student.setBirthDate(LocalDate.parse(dto.birthDate()));
         student.setSex(dto.sex());
         student.setTrainingCenter(trainingCenter);
+    }
+
+    private void validateTeacherAccess(User teacher, TrainingCenter trainingCenter) {
+        if (!teacher.isMaster() || !teacher.isAdmin()) {
+            if (!trainingCenter.getTeacher().equals(teacher)) {
+                throw new ValidationException("Adicione o aluno somente a núcleos que você é professor.");
+            }
+        }
     }
 }
