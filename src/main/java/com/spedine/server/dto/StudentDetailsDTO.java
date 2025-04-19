@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.UUID;
 
 public record StudentDetailsDTO(
+        UUID id,
         StudentInformationDTO student,
         List<BeltInfoDTO> belts,
-        UUID trainingCenter
+        UUID trainingCenterId
 ) {
 }
