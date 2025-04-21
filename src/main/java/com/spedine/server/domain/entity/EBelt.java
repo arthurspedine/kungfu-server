@@ -20,7 +20,9 @@ public enum EBelt {
     BLACK_4_GRADE("Preta 4° Grau"),
     BLACK_5_GRADE("Preta 5° Grau"),
     BLACK_6_GRADE("Preta 6° Grau"),
-    BLACK_7_GRADE("Preta 7° Grau");
+    BLACK_7_GRADE("Preta 7° Grau"),
+    BLACK_8_GRADE("Preta 8° Grau"),
+    BLACK_9_GRADE("Preta 9° Grau");
 
     private final String description;
 

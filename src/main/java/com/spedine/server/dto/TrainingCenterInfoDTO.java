@@ -12,6 +12,7 @@ public record TrainingCenterInfoDTO(
         String additionalAddress,
         String city,
         String state,
+        String zipCode,
         String openingDate,
         String closingDate
 ) {

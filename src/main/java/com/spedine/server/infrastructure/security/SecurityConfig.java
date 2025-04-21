@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         req -> {
                             req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
-                            req.requestMatchers(HttpMethod.GET, "/belt/all").permitAll();
+                            req.requestMatchers(HttpMethod.GET, "/belt/all", "/user/list/all").permitAll();
                             req.anyRequest().authenticated();
                         }
                 )
