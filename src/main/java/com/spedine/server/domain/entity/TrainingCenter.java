@@ -51,20 +51,6 @@ public class TrainingCenter {
     public TrainingCenter() {
     }
 
-    public void addStudent(Student student) {
-        students.add(student);
-        student.setTrainingCenter(this);
-    }
-
-    public void removeStudent(Student student) {
-        students.remove(student);
-        student.setTrainingCenter(null);
-    }
-
-    public boolean canBeModifiedBy(User user) {
-        return user.isMaster() || user.getId() == this.teacher.getId();
-    }
-
     public UUID getId() {
         return id;
     }
@@ -79,10 +65,6 @@ public class TrainingCenter {
 
     public Set<Student> getStudents() {
         return students;
-    }
-
-    public void setStudents(Set<Student> students) {
-        this.students = students;
     }
 
     public String getName() {
@@ -134,7 +116,7 @@ public class TrainingCenter {
     }
 
     public String getZipCode() {
-        return this.zipCode.substring(0, 4) + this.zipCode.substring(5);
+        return zipCode;
     }
 
     public void setZipCode(String zipCode) {

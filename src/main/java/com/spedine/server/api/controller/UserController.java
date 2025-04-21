@@ -40,7 +40,7 @@ public class UserController {
     @GetMapping("/info")
     public ResponseEntity<UserDashboardInfoDTO> getUserInfo(Authentication auth) {
         User user = (User) auth.getPrincipal();
-        return ResponseEntity.ok(new UserDashboardInfoDTO(user.getName(), user.getUsername()));
+        return ResponseEntity.ok(new UserDashboardInfoDTO(user.getName(), user.getUsername(), user.getRole()));
     }
 
     @GetMapping("/list/all")

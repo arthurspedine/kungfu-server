@@ -1,6 +1,7 @@
 package com.spedine.server.api.controller;
 
 import com.spedine.server.api.dto.CreateTrainingCenterDTO;
+import com.spedine.server.api.dto.EditTrainingCenterDTO;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.service.TrainingCenterService;
 import com.spedine.server.dto.TrainingCenterInfoDTO;
@@ -59,5 +60,16 @@ public class TrainingCenterController {
         User user = (User) auth.getPrincipal();
         TrainingCenterDetailsDTO details = service.getDetailsById(user, id);
         return ResponseEntity.ok(details);
+    }
+
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<Void> editTrainingCenter(
+            @PathVariable UUID id,
+            @RequestBody EditTrainingCenterDTO dto,
+            Authentication auth
+            ) {
+        User user = (User) auth.getPrincipal();
+        service.updateTrainingCenter(id, dto, user);
+        return ResponseEntity.ok().build();
     }
 }
