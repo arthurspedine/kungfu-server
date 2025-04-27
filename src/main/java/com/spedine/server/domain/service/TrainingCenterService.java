@@ -12,6 +12,8 @@ import com.spedine.server.domain.validations.training_center.update.UpdateTraini
 import com.spedine.server.dto.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ import java.util.UUID;
 
 @Service
 public class TrainingCenterService {
+
+    private final Logger logger = LoggerFactory.getLogger(TrainingCenterService.class);
 
     private final TrainingCenterRepository repository;
 
@@ -38,18 +42,30 @@ public class TrainingCenterService {
     }
 
     public void registerTrainingCenter(CreateTrainingCenterDTO dto) {
+        logger.info("Registrando novo núcleo de treinamento com dados: {}", dto);
+
         createValidations.forEach(validation -> validation.validate(dto));
+
         User user = userService.findUserById(dto.teacherId());
-        if (!user.hasTeacherRole())
+        if (!user.hasTeacherRole()) {
+            logger.warn("Tentativa de registrar núcleo de treinamento com professor sem permissão: {}", user.getUsername());
             throw new ValidationException("O professor deve ter permissão para ser o professor docente do núcleo.");
+        }
+
         TrainingCenter trainingCenter = new TrainingCenter();
         trainingCenter.setTeacher(user);
         setDefaultFields(trainingCenter, dto.name(), dto.number(), dto.additionalAddress(), dto.street(), dto.city(), dto.state(), dto.zipCode(), dto.openingDate());
+
+        logger.info("Salvando novo núcleo de treinamento no repositório");
         repository.save(trainingCenter);
     }
 
     public TrainingCenter findById(UUID id) {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Nucleo nao encontrado."));
+        logger.debug("Buscando núcleo de treinamento pelo ID: {}", id);
+        return repository.findById(id).orElseThrow(() -> {
+            logger.warn("Núcleo de treinamento não encontrado com ID: {}", id);
+            return new EntityNotFoundException("Núcleo não encontrado.");
+        });
     }
 
     public List<TrainingCenterInfoDTO> findAllTrainingCenterDTO() {
@@ -64,6 +80,7 @@ public class TrainingCenterService {
     public TrainingCenterInfoDTO getInfoById(User user, UUID id) {
         TrainingCenter trainingCenter = findById(id);
         if (!trainingCenter.getTeacher().equals(user) && !user.isMaster()) {
+            logger.warn("Usuário: {} tentou acessar núcleo de treinamento sem permissão", user.getUsername());
             throw new ValidationException("Você não pode acessar este núcleo.");
         }
         return mapperToDTO(trainingCenter);
@@ -72,6 +89,7 @@ public class TrainingCenterService {
     public TrainingCenterDetailsDTO getDetailsById(User user, UUID id) {
         TrainingCenter trainingCenter = findById(id);
         if (!trainingCenter.getTeacher().equals(user) && !user.isMaster()) {
+            logger.warn("Usuário ID: {} tentou acessar detalhes de núcleo de treinamento sem permissão", user.getId());
             throw new ValidationException("Você não pode acessar este núcleo.");
         }
         return new TrainingCenterDetailsDTO(
@@ -92,20 +110,30 @@ public class TrainingCenterService {
     }
 
     public void updateTrainingCenter(UUID id, EditTrainingCenterDTO dto, User user) {
+        logger.info("Atualizando núcleo de treinamento ID: {} com dados: {} pelo usuário: {}", id, dto, user.getUsername());
+
         TrainingCenter trainingCenter = findById(id);
         User currentTeacher = trainingCenter.getTeacher();
         if (!currentTeacher.equals(user) && !user.isMaster()) {
+            logger.warn("Usuário: {} não tem permissão para atualizar o núcleo de treinamento ID: {}", user.getUsername(), id);
             throw new RuntimeException("Você não pode atualizar este núcleo.");
         }
+
         updateValidations.forEach(validation -> validation.validate(dto));
+
         User newTeacher = dto.teacherId() == user.getId() ? user : userService.findUserById(dto.teacherId());
         if (!currentTeacher.equals(newTeacher)) {
-            if (!newTeacher.hasTeacherRole())
+            if (!newTeacher.hasTeacherRole()) {
+                logger.warn("Tentativa de atribuir professor sem permissão ao núcleo de treinamento ID: {}", id);
                 throw new ValidationException("O professor deve ter permissão para ser o professor docente do núcleo.");
+            }
             trainingCenter.setTeacher(newTeacher);
         }
+
         setDefaultFields(trainingCenter, dto.name(), dto.number(), dto.additionalAddress(), dto.street(), dto.city(), dto.state(), dto.zipCode(), dto.openingDate());
         trainingCenter.setClosingDate(dto.closingDate());
+
+        logger.info("Salvando núcleo de treinamento atualizado no repositório");
         repository.save(trainingCenter);
     }
 

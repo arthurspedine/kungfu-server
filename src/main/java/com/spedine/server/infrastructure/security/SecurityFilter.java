@@ -1,6 +1,5 @@
 package com.spedine.server.infrastructure.security;
 
-import com.spedine.server.infrastructure.CookieName;
 import com.spedine.server.domain.repository.UserRepository;
 import com.spedine.server.domain.service.TokenService;
 import jakarta.servlet.FilterChain;

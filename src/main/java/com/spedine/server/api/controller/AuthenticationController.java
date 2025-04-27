@@ -7,6 +7,8 @@ import com.spedine.server.domain.service.TokenService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +24,7 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class AuthenticationController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
     private final AuthenticationManager manager;
 
     private final TokenService tokenService;
@@ -44,6 +47,7 @@ public class AuthenticationController {
         response.addCookie(cookie);
 
         response.setHeader("Access-Control-Allow-Credentials", "true");
+        logger.info("Login bem-sucedido para o usuário: {}", body.email());
         return ResponseEntity.ok(Map.of("token", token));
     }
 }
