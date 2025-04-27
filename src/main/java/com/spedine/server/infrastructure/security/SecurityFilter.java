@@ -29,7 +29,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String jwt = getCookiesToken(request);
+        String jwt = getBearerToken(request);
         if (jwt != null) {
             String email = tokenService.getSubject(jwt);
             UserDetails user = userRepository.findByEmail(email);
@@ -40,22 +40,12 @@ public class SecurityFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String getCookiesToken(HttpServletRequest request) {
-        String cookies = request.getHeader("Cookie");
+    private String getBearerToken(HttpServletRequest request) {
+        String authToken = request.getHeader("Authorization");
 
-        if (cookies != null) {
-            // SAVING COOKIE NAME AS VARIABLE
-            String cookieName = CookieName.getName() + "=";
-
-            String[] cookieArray = cookies.split(";");
-            for (String cookie : cookieArray) {
-                cookie = cookie.trim();
-                if (cookie.startsWith(cookieName)) {
-                    return cookie.substring(cookieName.length());
-                }
-            }
+        if (authToken != null) {
+            return authToken.replace("Bearer ", "");
         }
-
         return null;
     }
 }
