@@ -7,6 +7,7 @@ import com.spedine.server.domain.service.StudentBeltService;
 import com.spedine.server.domain.service.StudentService;
 import com.spedine.server.dto.StudentDetailsDTO;
 import com.spedine.server.dto.StudentInfoDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/student")
+@SecurityRequirement(name = "bearer-key")
 public class StudentController {
 
     private final StudentService studentService;

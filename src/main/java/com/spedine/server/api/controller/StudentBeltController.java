@@ -5,6 +5,7 @@ import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.StudentBelt;
 import com.spedine.server.domain.service.StudentBeltService;
 import com.spedine.server.domain.service.StudentService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/student-belt")
+@SecurityRequirement(name = "bearer-key")
 public class StudentBeltController {
 
     private final StudentBeltService service;

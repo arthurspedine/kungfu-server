@@ -7,6 +7,7 @@ import com.spedine.server.domain.service.TrainingCenterService;
 import com.spedine.server.dto.TrainingCenterDetailsDTO;
 import com.spedine.server.dto.TrainingCenterInfoDTO;
 import com.spedine.server.dto.TrainingCenterSimpleInfoDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/training-center")
+@SecurityRequirement(name = "bearer-key")
 public class TrainingCenterController {
 
     private final TrainingCenterService service;

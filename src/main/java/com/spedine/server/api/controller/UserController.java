@@ -6,6 +6,7 @@ import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.service.StudentBeltService;
 import com.spedine.server.domain.service.UserService;
 import com.spedine.server.api.dto.CreateUserDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ public class UserController {
 
     @PostMapping("/register")
     @PreAuthorize("hasRole('MASTER')")
+    @SecurityRequirement(name = "bearer-key")
     @Transactional
     public ResponseEntity<?> registerUser(@RequestBody @Valid CreateUserDTO dto) {
         User user = userService.registerUser(dto);
@@ -38,6 +40,7 @@ public class UserController {
     }
 
     @GetMapping("/info")
+    @SecurityRequirement(name = "bearer-key")
     public ResponseEntity<UserDashboardInfoDTO> getUserInfo(Authentication auth) {
         User user = (User) auth.getPrincipal();
         return ResponseEntity.ok(new UserDashboardInfoDTO(user.getName(), user.getUsername(), user.getRole()));

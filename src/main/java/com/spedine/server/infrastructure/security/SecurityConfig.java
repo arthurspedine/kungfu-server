@@ -35,6 +35,14 @@ public class SecurityConfig {
                         req -> {
                             req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
                             req.requestMatchers(HttpMethod.GET, "/belt/all", "/user/list/all").permitAll();
+                            req.requestMatchers(
+                                    "/swagger-ui.html",
+                                    "/swagger-ui/**",
+                                    "/v3/api-docs/**",
+                                    "/v3/api-docs.yaml",
+                                    "/api-docs/**",
+                                    "/webjars/**"
+                            ).permitAll();
                             req.anyRequest().authenticated();
                         }
                 )
