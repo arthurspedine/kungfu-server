@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,7 +70,7 @@ public class StudentBeltService {
 
     @Transactional
     public void updateBeltsForStudent(Student student, List<BeltDataDTO> dto) {
-        logger.info("Atualizando faixas para o estudante ID: {}, quantidade de faixas solicitadas: {}", student.getId(), dto.size());
+        logger.info("Atualizando faixas para o estudante ID: {}", student.getId());
 
         Set<EBelt> requestedBeltTypes = dto.stream()
                 .map(BeltDataDTO::type)
@@ -85,6 +87,26 @@ public class StudentBeltService {
             logger.info("Removendo {} faixas do estudante ID: {}", beltsToRemove.size(), student.getId());
             student.getBelts().removeAll(beltsToRemove);
             repository.deleteAll(beltsToRemove);
+        }
+
+        Map<EBelt, BeltDataDTO> dtoMap = dto.stream()
+                .collect(Collectors.toMap(BeltDataDTO::type, Function.identity()));
+
+        for (StudentBelt existingBelt : currentBelts) {
+            if (!beltsToRemove.contains(existingBelt)) {
+                EBelt beltType = existingBelt.getBelt().getName();
+                BeltDataDTO beltDto = dtoMap.get(beltType);
+
+                if (beltDto != null) {
+                    LocalDate currentDate = existingBelt.getAchievedDate();
+                    LocalDate newDate = LocalDate.parse(beltDto.achievedDate());
+                    if (newDate != null && !newDate.isEqual(currentDate)) {
+                        logger.info("Atualizando data de aquisição da faixa {} para o estudante ID: {} de {} para {}",
+                                beltType, student.getId(), currentDate, newDate);
+                        existingBelt.setAchievedDate(newDate);
+                    }
+                }
+            }
         }
 
         Set<EBelt> existingBeltTypes = currentBelts.stream()
