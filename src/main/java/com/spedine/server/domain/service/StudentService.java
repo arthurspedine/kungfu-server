@@ -15,6 +15,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -78,8 +80,8 @@ public class StudentService {
         );
     }
 
-    public List<StudentInfoDTO> listAll(User user) {
-        return repository.listAllStudents(user.isMaster(), user.getId());
+    public Page<StudentInfoDTO> listAll(User user, Pageable pageable) {
+        return repository.listAllStudents(user.isMaster(), user.getId(), pageable);
     }
 
     @Transactional

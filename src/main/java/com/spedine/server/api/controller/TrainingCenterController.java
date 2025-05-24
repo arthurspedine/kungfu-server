@@ -14,7 +14,6 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -49,14 +48,7 @@ public class TrainingCenterController {
                                                                   @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<TrainingCenterInfoDTO> pageResult = service.findAllTrainingCenterDTO(pageable);
-        PageDTO<TrainingCenterInfoDTO> pageDTO = new PageDTO<>(
-                pageResult.getContent(),
-                pageResult.getNumber(),
-                pageResult.getSize(),
-                pageResult.getTotalElements(),
-                pageResult.getTotalPages()
-        );
-        return ResponseEntity.ok(pageDTO);
+        return ResponseEntity.ok(PageDTO.fromPage(pageResult));
     }
 
     @GetMapping("/all/info")
