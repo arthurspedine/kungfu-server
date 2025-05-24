@@ -37,7 +37,7 @@ public class User extends Student implements UserDetails {
     }
 
     public boolean isMaster() {
-        return this.role == ERole.MASTER;
+        return this.role == ERole.MASTER || this.role == ERole.ADMIN;
     }
 
     public boolean hasTeacherRole() {

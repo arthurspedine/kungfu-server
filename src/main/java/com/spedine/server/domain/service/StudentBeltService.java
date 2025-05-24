@@ -100,7 +100,7 @@ public class StudentBeltService {
                 if (beltDto != null) {
                     LocalDate currentDate = existingBelt.getAchievedDate();
                     LocalDate newDate = LocalDate.parse(beltDto.achievedDate());
-                    if (newDate != null && !newDate.isEqual(currentDate)) {
+                    if (!newDate.isEqual(currentDate)) {
                         logger.info("Atualizando data de aquisição da faixa {} para o estudante ID: {} de {} para {}",
                                 beltType, student.getId(), currentDate, newDate);
                         existingBelt.setAchievedDate(newDate);
