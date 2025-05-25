@@ -6,9 +6,7 @@ import com.spedine.server.domain.repository.BeltRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +27,9 @@ public class BeltService {
 
     public List<Map<EBelt, String>> listAllBets() {
         List<Belt> belts = repository.findAll();
+        List<EBelt> beltOrder = Arrays.asList(EBelt.values());
         return belts.stream()
+                .sorted(Comparator.comparingInt(b -> beltOrder.indexOf(b.getName())))
                 .map(belt -> {
                             Map<EBelt, String> betMap = new HashMap<>();
                             betMap.put(belt.getName(), belt.getName().getDescription());

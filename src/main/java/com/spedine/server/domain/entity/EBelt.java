@@ -2,6 +2,7 @@ package com.spedine.server.domain.entity;
 
 public enum EBelt {
 
+    BEGGINER("Iniciante"),
     WHITE("Branca"),
     BLUE("Azul"),
     BLUE_GRADE("Azul-Grau"),
