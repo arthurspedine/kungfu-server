@@ -1,12 +1,12 @@
 package com.spedine.server.domain.service;
 
 import com.spedine.server.api.dto.BeltDataDTO;
-import com.spedine.server.domain.entity.EBelt;
-import com.spedine.server.domain.validations.student_belt.StudentBeltValidationHandler;
 import com.spedine.server.domain.entity.Belt;
+import com.spedine.server.domain.entity.EBelt;
 import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.StudentBelt;
 import com.spedine.server.domain.repository.StudentBeltRepository;
+import com.spedine.server.domain.validations.student_belt.StudentBeltValidationHandler;
 import com.spedine.server.dto.BeltInfoDTO;
 import com.spedine.server.dto.StudentBeltDTO;
 import jakarta.transaction.Transactional;
@@ -72,16 +72,16 @@ public class StudentBeltService {
     public void updateBeltsForStudent(Student student, List<BeltDataDTO> dto) {
         logger.info("Atualizando faixas para o estudante ID: {}", student.getId());
 
-        Set<EBelt> requestedBeltTypes = dto.stream()
-                .map(BeltDataDTO::type)
+        Map<EBelt, StudentBelt> currentBeltsMap = student.getBelts().stream()
+                .collect(Collectors.toMap(sb -> sb.getBelt().getName(), Function.identity()));
+
+        Map<EBelt, BeltDataDTO> newBeltsMap = dto.stream()
+                .collect(Collectors.toMap(BeltDataDTO::type, Function.identity()));
+
+        Set<StudentBelt> beltsToRemove = currentBeltsMap.entrySet().stream()
+                .filter(entry -> !newBeltsMap.containsKey(entry.getKey()))
+                .map(Map.Entry::getValue)
                 .collect(Collectors.toSet());
-
-        List<StudentBelt> currentBelts = new ArrayList<>(student.getBelts());
-        logger.debug("Quantidade de faixas atuais: {}", currentBelts.size());
-
-        List<StudentBelt> beltsToRemove = currentBelts.stream()
-                .filter(studentBelt -> !requestedBeltTypes.contains(studentBelt.getBelt().getName()))
-                .toList();
 
         if (!beltsToRemove.isEmpty()) {
             logger.info("Removendo {} faixas do estudante ID: {}", beltsToRemove.size(), student.getId());
@@ -89,37 +89,30 @@ public class StudentBeltService {
             repository.deleteAll(beltsToRemove);
         }
 
-        Map<EBelt, BeltDataDTO> dtoMap = dto.stream()
-                .collect(Collectors.toMap(BeltDataDTO::type, Function.identity()));
+       List<StudentBelt> beltsToSave = new ArrayList<>();
 
-        for (StudentBelt existingBelt : currentBelts) {
-            if (!beltsToRemove.contains(existingBelt)) {
-                EBelt beltType = existingBelt.getBelt().getName();
-                BeltDataDTO beltDto = dtoMap.get(beltType);
+        for (BeltDataDTO beltDto : dto) {
+            LocalDate newDate = LocalDate.parse(beltDto.achievedDate());
+            StudentBelt existingBelt = currentBeltsMap.get(beltDto.type());
 
-                if (beltDto != null) {
-                    LocalDate currentDate = existingBelt.getAchievedDate();
-                    LocalDate newDate = LocalDate.parse(beltDto.achievedDate());
-                    if (newDate != null && !newDate.isEqual(currentDate)) {
-                        logger.info("Atualizando data de aquisição da faixa {} para o estudante ID: {} de {} para {}",
-                                beltType, student.getId(), currentDate, newDate);
-                        existingBelt.setAchievedDate(newDate);
-                    }
+            if (existingBelt != null) {
+                if (!existingBelt.getAchievedDate().isEqual(newDate)) {
+                    existingBelt.setAchievedDate(newDate);
+                    validations.forEach(validation -> validation.validate(student, existingBelt));
+                    beltsToSave.add(existingBelt);
                 }
+            } else {
+                Belt belt = beltService.findBeltByEnumType(beltDto.type());
+                StudentBelt newStudentBelt = new StudentBelt(student, belt, newDate);
+                validations.forEach(validation -> validation.validate(student, newStudentBelt));
+                student.getBelts().add(newStudentBelt);
+                beltsToSave.add(newStudentBelt);
             }
         }
 
-        Set<EBelt> existingBeltTypes = currentBelts.stream()
-                .map(sb -> sb.getBelt().getName())
-                .collect(Collectors.toSet());
-
-        List<BeltDataDTO> beltsToAdd = dto.stream()
-                .filter(belt -> !existingBeltTypes.contains(belt.type()))
-                .toList();
-
-        if (!beltsToAdd.isEmpty()) {
-            logger.info("Adicionando {} novas faixas ao estudante ID: {}", beltsToAdd.size(), student.getId());
-            saveBeltsDtoToStudent(student, beltsToAdd);
+        if (!beltsToSave.isEmpty()) {
+            logger.info("Salvando {} faixas atualizadas/novas no repositório", beltsToSave.size());
+            repository.saveAll(beltsToSave);
         }
     }
 
