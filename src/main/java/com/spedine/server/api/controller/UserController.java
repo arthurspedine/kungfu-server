@@ -49,7 +49,7 @@ public class UserController {
     @SecurityRequirement(name = "bearer-key")
     public ResponseEntity<UserDashboardInfoDTO> getUserInfo(Authentication auth) {
         User user = (User) auth.getPrincipal();
-        return ResponseEntity.ok(new UserDashboardInfoDTO(user.getStudent().getName(), user.getUsername(), user.getRole()));
+        return ResponseEntity.ok(new UserDashboardInfoDTO(user.getId(), user.getStudent().getName(), user.getUsername(), user.getRole()));
     }
 
     @GetMapping("/list/all")

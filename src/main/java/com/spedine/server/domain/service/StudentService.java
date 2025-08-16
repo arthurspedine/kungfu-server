@@ -91,9 +91,18 @@ public class StudentService {
         logger.info("Usuário {} - editando estudante com id: {}", teacher.getUsername(), id);
 
         Student student = findStudentById(id);
-        TrainingCenter trainingCenter = trainingCenterService.findById(dto.trainingCenterId());
+        if (!teacher.getStudent().getId().equals(student.getId())) {
+            if (!teacher.isMaster() && student.getUser().hasTeacherRole()) {
+                logger.warn("Usuário: {} tentou editar um estudante professor ou mestre: {}", teacher.getUsername(), student.getId());
+                throw new ValidationException("Você não pode editar um professor ou mestre.");
+            }
+        }
 
-        validateTeacherAccess(teacher, trainingCenter);
+        TrainingCenter trainingCenter = null;
+        if (dto.trainingCenterId() != null) {
+            trainingCenter = trainingCenterService.findById(dto.trainingCenterId());
+            validateTeacherAccess(teacher, trainingCenter);
+        }
 
         setStudentVariables(student, dto.student(), trainingCenter);
 
@@ -109,10 +118,10 @@ public class StudentService {
     }
 
     private void validateTeacherAccess(User teacher, TrainingCenter trainingCenter) {
-        logger.debug("Validando acesso do professor no núcleo de treinamento ID: {}: teacherId={}, isMaster={}, isAdmin={}",
+        logger.info("Validando acesso do professor no núcleo de treinamento ID: {}: teacherId={}, isMaster={}, isAdmin={}",
                 trainingCenter.getId(), teacher.getId(), teacher.isMaster(), teacher.isAdmin());
 
-        if (!teacher.isMaster() || !teacher.isAdmin()) {
+        if (!teacher.isMaster()) {
             if (!trainingCenter.getTeacher().equals(teacher)) {
                 logger.warn("Acesso negado: Professor ID {} tentou acessar o núcleo de treinamento {}",
                         teacher.getId(), trainingCenter.getId());

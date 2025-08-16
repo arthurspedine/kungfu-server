@@ -34,17 +34,15 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
                     "LEFT JOIN users u ON u.student_id = s.id " +
                     "LEFT JOIN training_centers tc ON tc.id = s.training_center_id " +
                     "WHERE s.active = true " +
-                    "AND (:isMaster = true OR u IS NULL) " +
-                    "AND (:isMaster = true OR tc.teacher_id = :userId) " +
-//                    "AND s.training_center_id IS NOT NULL " +
+                    "AND (:isMaster = true OR u IS NULL OR s.training_center_id IS NULL) " +
+                    "AND (:isMaster = true OR tc.teacher_id = :userId OR s.training_center_id IS NULL) " +
                     "ORDER BY s.name",
             countQuery = "SELECT COUNT(*) FROM students s " +
                     "LEFT JOIN users u ON u.student_id = s.id " +
                     "LEFT JOIN training_centers tc ON tc.id = s.training_center_id " +
                     "WHERE s.active = true " +
-                    "AND (:isMaster = true OR u IS NULL) " +
-                    "AND (:isMaster = true OR tc.teacher_id = :userId) ",
-//                    "AND s.training_center_id IS NOT NULL",
+                    "AND (:isMaster = true OR u IS NULL OR s.training_center_id IS NULL) " +
+                    "AND (:isMaster = true OR tc.teacher_id = :userId OR s.training_center_id IS NULL) ",
             nativeQuery = true
     )
     Page<StudentInfoDTO> listAllStudents(@Param("isMaster") boolean isMaster, UUID userId, Pageable pageable);

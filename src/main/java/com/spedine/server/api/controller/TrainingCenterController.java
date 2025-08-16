@@ -65,9 +65,8 @@ public class TrainingCenterController {
     }
 
     @GetMapping("/details/{id}")
-    public ResponseEntity<TrainingCenterDetailsDTO> getDetailsFromTrainingCenterId(@PathVariable UUID id, Authentication auth) {
-        User user = (User) auth.getPrincipal();
-        TrainingCenterDetailsDTO details = service.getDetailsById(user, id);
+    public ResponseEntity<TrainingCenterDetailsDTO> getDetailsFromTrainingCenterId(@PathVariable UUID id) {
+        TrainingCenterDetailsDTO details = service.getDetailsById(id);
         return ResponseEntity.ok(details);
     }
 

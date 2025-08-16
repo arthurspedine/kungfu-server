@@ -33,6 +33,9 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<StudentBelt> belts = new ArrayList<>();
 
+    @OneToOne(mappedBy = "student")
+    private User user;
+
     public Student() {
     }
 
@@ -93,5 +96,9 @@ public class Student {
 
     public void setTrainingCenter(TrainingCenter trainingCenter) {
         this.trainingCenter = trainingCenter;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

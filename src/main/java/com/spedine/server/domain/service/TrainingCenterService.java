@@ -88,12 +88,8 @@ public class TrainingCenterService {
         return mapperToDTO(trainingCenter);
     }
 
-    public TrainingCenterDetailsDTO getDetailsById(User user, UUID id) {
+    public TrainingCenterDetailsDTO getDetailsById(UUID id) {
         TrainingCenter trainingCenter = findById(id);
-        if (!trainingCenter.getTeacher().equals(user) && !user.isMaster()) {
-            logger.warn("Usuário ID: {} tentou acessar detalhes de núcleo de treinamento sem permissão", user.getId());
-            throw new ValidationException("Você não pode acessar este núcleo.");
-        }
         return new TrainingCenterDetailsDTO(
                 mapperToDTO(trainingCenter), trainingCenter.getStudents().stream().map(this::mapperToStudentDTO).toList()
         );
