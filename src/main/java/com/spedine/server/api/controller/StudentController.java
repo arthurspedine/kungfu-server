@@ -6,11 +6,14 @@ import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.service.StudentBeltService;
 import com.spedine.server.domain.service.StudentService;
+import com.spedine.server.domain.service.UserService;
 import com.spedine.server.dto.StudentDetailsDTO;
 import com.spedine.server.dto.StudentInfoDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,17 +31,22 @@ public class StudentController {
 
     private final StudentService studentService;
     private final StudentBeltService studentBeltService;
+    private final UserService userService;
 
-    public StudentController(StudentService studentService, StudentBeltService studentBeltService) {
+    public StudentController(StudentService studentService, StudentBeltService studentBeltService, UserService userService) {
         this.studentService = studentService;
         this.studentBeltService = studentBeltService;
+        this.userService = userService;
     }
 
     @PostMapping("/register")
     @Transactional
     public ResponseEntity<Void> registerStudent(@RequestBody @Valid FormStudentDTO dto, Authentication auth) {
         User user = (User) auth.getPrincipal();
-        Student student = studentService.registerStudentByDto(dto, user);
+        Student student = studentService.registerStudentByDto(dto.student(), user, dto.trainingCenterId());
+        if (dto.user() != null && user.isMaster()) {
+            userService.registerUser(dto.user().login(), dto.user().role(), student);
+        }
         studentBeltService.registerMultipleBeltsForStudent(student, dto.belts());
         return ResponseEntity.status(201).build();
     }

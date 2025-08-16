@@ -21,7 +21,7 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
                     "b.name AS current_belt, " +
                     "EXTRACT(MONTH FROM AGE(CURRENT_DATE, latest_belt.achieved_date))::INTEGER + " +
                     "(EXTRACT(YEAR FROM AGE(CURRENT_DATE, latest_belt.achieved_date))::INTEGER * 12) AS belt_age_months, " +
-                    "tc.name AS training_center " +
+                    "COALESCE(tc.name, 'Não associado') AS training_center " +
                     "FROM students s " +
                     "LEFT JOIN LATERAL ( " +
                     "    SELECT sb.belt_id, sb.achieved_date " +
@@ -31,20 +31,20 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
                     "    LIMIT 1 " +
                     ") latest_belt ON true " +
                     "LEFT JOIN belts b ON b.id = latest_belt.belt_id " +
-                    "LEFT JOIN users u ON u.id = s.id " +
+                    "LEFT JOIN users u ON u.student_id = s.id " +
                     "LEFT JOIN training_centers tc ON tc.id = s.training_center_id " +
                     "WHERE s.active = true " +
-                    "AND (:isMaster = true OR u IS NULL OR u.role != 'ADMIN') " +
+                    "AND (:isMaster = true OR u IS NULL) " +
                     "AND (:isMaster = true OR tc.teacher_id = :userId) " +
-                    "AND s.training_center_id IS NOT NULL " +
+//                    "AND s.training_center_id IS NOT NULL " +
                     "ORDER BY s.name",
             countQuery = "SELECT COUNT(*) FROM students s " +
-                    "LEFT JOIN users u ON u.id = s.id " +
+                    "LEFT JOIN users u ON u.student_id = s.id " +
                     "LEFT JOIN training_centers tc ON tc.id = s.training_center_id " +
                     "WHERE s.active = true " +
-                    "AND (:isMaster = true OR u IS NULL OR u.role != 'ADMIN') " +
-                    "AND (:isMaster = true OR tc.teacher_id = :userId) " +
-                    "AND s.training_center_id IS NOT NULL",
+                    "AND (:isMaster = true OR u IS NULL) " +
+                    "AND (:isMaster = true OR tc.teacher_id = :userId) ",
+//                    "AND s.training_center_id IS NOT NULL",
             nativeQuery = true
     )
     Page<StudentInfoDTO> listAllStudents(@Param("isMaster") boolean isMaster, UUID userId, Pageable pageable);

@@ -9,6 +9,6 @@ public record StudentDetailsDTO(
         UUID id,
         StudentInformationDTO student,
         List<BeltInfoDTO> belts,
-        UUID trainingCenterId
+        TrainingCenterSimpleInfoDTO trainingCenter
 ) {
 }

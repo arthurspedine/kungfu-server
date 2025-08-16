@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "students")
 public class Student {
 

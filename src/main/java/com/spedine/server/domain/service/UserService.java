@@ -1,16 +1,17 @@
 package com.spedine.server.domain.service;
 
-import com.spedine.server.api.dto.CreateUserDTO;
-import com.spedine.server.dto.UserListingInfoDTO;
+import com.spedine.server.api.dto.LoginBodyDTO;
+import com.spedine.server.domain.entity.ERole;
+import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.repository.UserRepository;
+import com.spedine.server.dto.UserListingInfoDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,18 +29,18 @@ public class UserService {
     }
 
     @Transactional
-    public User registerUser(CreateUserDTO dto) {
+    public User registerUser(LoginBodyDTO dto, ERole role, Student student) {
         User user = new User();
-        // Student setup
-        user.setName(dto.student().name());
-        user.setBirthDate(LocalDate.parse(dto.student().birthDate()));
-        user.setSex(dto.student().sex());
 
+        user.setStudent(student);
         // User setup
-        String encryptedPassword = passwordEncoder.encode(dto.login().password());
-        user.setEmail(dto.login().email());
+        if (dto.email() == null || dto.password() == null) {
+            throw new IllegalArgumentException("Login information is required.");
+        }
+        String encryptedPassword = passwordEncoder.encode(dto.password());
+        user.setEmail(dto.email());
         user.setPassword(encryptedPassword);
-        user.setRole(dto.role());
+        user.setRole(role);
 
         // Save to get UUID
         return repository.save(user);

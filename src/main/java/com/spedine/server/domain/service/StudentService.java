@@ -10,6 +10,7 @@ import com.spedine.server.domain.repository.StudentRepository;
 import com.spedine.server.dto.BeltInfoDTO;
 import com.spedine.server.dto.StudentDetailsDTO;
 import com.spedine.server.dto.StudentInfoDTO;
+import com.spedine.server.dto.TrainingCenterSimpleInfoDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
@@ -38,15 +39,16 @@ public class StudentService {
     }
 
     @Transactional
-    public Student registerStudentByDto(FormStudentDTO dto, User teacher) {
-        logger.info("Usuário {} - registrando novo estudante com dados: {}", teacher.getUsername(), dto);
-
+    public Student registerStudentByDto(StudentInformationDTO dto, User teacher, UUID trainingCenterId) {
         Student student = new Student();
-        TrainingCenter trainingCenter = trainingCenterService.findById(dto.trainingCenterId());
-
-        validateTeacherAccess(teacher, trainingCenter);
-
-        setStudentVariables(student, dto.student(), trainingCenter);
+        TrainingCenter trainingCenter = null;
+        if (teacher != null && trainingCenterId != null) {
+            // it is not a student registration for a new user
+            logger.info("Usuário {} - registrando novo estudante com dados: {}", teacher.getUsername(), dto);
+            trainingCenter = trainingCenterService.findById(trainingCenterId);
+            validateTeacherAccess(teacher, trainingCenter);
+        }
+        setStudentVariables(student, dto, trainingCenter);
 
         logger.info("Salvando novo estudante no repositório");
         return repository.save(student);
@@ -76,7 +78,7 @@ public class StudentService {
                 student.getId(),
                 studentInformationDTO,
                 beltsDTO,
-                student.getTrainingCenter().getId()
+                TrainingCenterSimpleInfoDTO.build(student.getTrainingCenter())
         );
     }
 
@@ -100,9 +102,6 @@ public class StudentService {
     }
 
     private void setStudentVariables(Student student, StudentInformationDTO dto, TrainingCenter trainingCenter) {
-        logger.debug("Configurando variáveis do estudante: nome={}, dataNascimento={}, trainingCenterId={}",
-                dto.name(), dto.birthDate(), trainingCenter.getId());
-
         student.setName(dto.name());
         student.setBirthDate(LocalDate.parse(dto.birthDate()));
         student.setSex(dto.sex());

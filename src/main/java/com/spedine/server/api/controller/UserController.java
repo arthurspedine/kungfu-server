@@ -1,11 +1,13 @@
 package com.spedine.server.api.controller;
 
-import com.spedine.server.dto.UserDashboardInfoDTO;
-import com.spedine.server.dto.UserListingInfoDTO;
+import com.spedine.server.api.dto.CreateUserDTO;
+import com.spedine.server.domain.entity.Student;
 import com.spedine.server.domain.entity.User;
 import com.spedine.server.domain.service.StudentBeltService;
+import com.spedine.server.domain.service.StudentService;
 import com.spedine.server.domain.service.UserService;
-import com.spedine.server.api.dto.CreateUserDTO;
+import com.spedine.server.dto.UserDashboardInfoDTO;
+import com.spedine.server.dto.UserListingInfoDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -23,27 +25,31 @@ public class UserController {
 
     private final UserService userService;
     private final StudentBeltService studentBeltService;
+    private final StudentService studentService;
 
-    public UserController(UserService userService, StudentBeltService studentBeltService) {
+    public UserController(UserService userService, StudentBeltService studentBeltService, StudentService studentService) {
         this.userService = userService;
         this.studentBeltService = studentBeltService;
+        this.studentService = studentService;
     }
 
     @PostMapping("/register")
     @PreAuthorize("hasRole('MASTER')")
     @SecurityRequirement(name = "bearer-key")
     @Transactional
-    public ResponseEntity<?> registerUser(@RequestBody @Valid CreateUserDTO dto) {
-        User user = userService.registerUser(dto);
-        studentBeltService.registerBeltForStudent(user, dto.belt());
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public ResponseEntity<Void> registerUser(@RequestBody @Valid CreateUserDTO dto) {
+        Student student = studentService.registerStudentByDto(dto.student(), null, null);
+        User user = userService.registerUser(dto.login(), dto.role(), student);
+        studentBeltService.registerMultipleBeltsForStudent(user.getStudent(), dto.belts());
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/info")
     @SecurityRequirement(name = "bearer-key")
     public ResponseEntity<UserDashboardInfoDTO> getUserInfo(Authentication auth) {
         User user = (User) auth.getPrincipal();
-        return ResponseEntity.ok(new UserDashboardInfoDTO(user.getName(), user.getUsername(), user.getRole()));
+        return ResponseEntity.ok(new UserDashboardInfoDTO(user.getStudent().getName(), user.getUsername(), user.getRole()));
     }
 
     @GetMapping("/list/all")

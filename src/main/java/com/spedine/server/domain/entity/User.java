@@ -9,8 +9,15 @@ import java.util.*;
 
 @Entity
 @Table(name = "users")
-@PrimaryKeyJoinColumn(name = "id")
-public class User extends Student implements UserDetails {
+public class User implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -83,6 +90,22 @@ public class User extends Student implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
     public void setEmail(String email) {

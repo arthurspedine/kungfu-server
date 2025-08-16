@@ -1,0 +1,1 @@
+ALTER TABLE users ALTER COLUMN student_id DROP NOT NULL;

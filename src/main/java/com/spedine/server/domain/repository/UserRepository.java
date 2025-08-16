@@ -16,7 +16,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query("SELECT new com.spedine.server.dto.UserListingInfoDTO(u.id, s.name) " +
             "FROM User u " +
             "JOIN Student s " +
-            "ON u.id = s.id " +
-            "WHERE u.role != 'ADMIN'")
+            "ON u.student.id = s.id")
     List<UserListingInfoDTO> listAllUsers();
 }

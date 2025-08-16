@@ -107,7 +107,7 @@ public class TrainingCenterService {
             trainingCenters = findAllByUser(user);
         }
         return trainingCenters.stream().map(trainingCenter -> new TrainingCenterSimpleInfoDTO(
-                trainingCenter.getId(), trainingCenter.getName(), trainingCenter.getTeacher().getName()
+                trainingCenter.getId(), trainingCenter.getName(), trainingCenter.getTeacher().getStudent().getName()
         )).toList();
     }
 
@@ -153,7 +153,12 @@ public class TrainingCenterService {
     private TrainingCenterInfoDTO mapperToDTO(TrainingCenter trainingCenter) {
         User teacher = trainingCenter.getTeacher();
         return new TrainingCenterInfoDTO(trainingCenter.getId(),
-                new TeacherDTO(teacher.getId(), teacher.getName(), teacher.getCurrentBelt().getName().getDescription(), teacher.getSex().getDescription()),
+                new TeacherDTO(
+                        teacher.getId(),
+                        teacher.getStudent().getName(),
+                        teacher.getStudent().getCurrentBelt().getName().getDescription(),
+                        teacher.getStudent().getSex().getDescription()
+                ),
                 trainingCenter.getStudents().size(), trainingCenter.getName(),
                 trainingCenter.getStreet(), trainingCenter.getNumber(), trainingCenter.getAdditionalAddress(),
                 trainingCenter.getCity(), trainingCenter.getState(), trainingCenter.getZipCode(),
